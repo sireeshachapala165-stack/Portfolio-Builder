@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapala Sireesha — AI/ML Engineer in Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#12152B;
+    --navy-deep:#0B0D1C;
+    --parchment:#F2EDE4;
+    --teal:#5EE6C8;
+    --slate:#8A8FA3;
+    --coral:#E8846B;
+    --card:#1A1E38;
+    --line:rgba(242,237,228,0.12);
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--navy);
+    color:var(--parchment);
+    font-family:'Space Grotesk', sans-serif;
+    overflow-x:hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  a{color:inherit;text-decoration:none;}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 32px;}
+
+  /* ---------- circuit trace ---------- */
+  #trace-svg{
+    position:absolute;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
+  }
+  .trace-path{
+    fill:none;
+    stroke:var(--teal);
+    stroke-width:1.5;
+    opacity:0.35;
+    stroke-dasharray:6 8;
+  }
+  .trace-node{
+    fill:var(--teal);
+    opacity:0.6;
+  }
+
+  /* ---------- nav ---------- */
+  header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(18,21,43,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 32px;
+    max-width:1080px;
+    margin:0 auto;
+  }
+  .nav-mark{
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+    color:var(--teal);
+    letter-spacing:0.05em;
+  }
+  .nav-links{
+    display:flex;
+    gap:28px;
+    font-size:14px;
+    color:var(--slate);
+  }
+  .nav-links a{
+    transition:color 0.2s ease;
+    position:relative;
+  }
+  .nav-links a:hover, .nav-links a:focus-visible{color:var(--parchment);}
+  .nav-links a:focus-visible{outline:2px solid var(--teal); outline-offset:4px; border-radius:2px;}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:110px 0 100px;
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--teal);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:28px;
+    position:relative;
+    z-index:1;
+  }
+  .eyebrow::before{
+    content:'';
+    width:8px;height:8px;
+    background:var(--teal);
+    border-radius:50%;
+    display:inline-block;
+    box-shadow:0 0 0 0 rgba(94,230,200,0.5);
+    animation:pulse 2.4s infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(94,230,200,0.45);}
+    70%{box-shadow:0 0 0 8px rgba(94,230,200,0);}
+    100%{box-shadow:0 0 0 0 rgba(94,230,200,0);}
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(42px, 7vw, 78px);
+    line-height:1.02;
+    letter-spacing:-0.01em;
+    position:relative;
+    z-index:1;
+    max-width:780px;
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--teal);
+  }
+  .hero-sub{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:clamp(18px,2.4vw,23px);
+    color:var(--slate);
+    margin-top:24px;
+    max-width:560px;
+    position:relative;
+    z-index:1;
+  }
+  .hero-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:24px;
+    margin-top:48px;
+    font-size:14px;
+    color:var(--slate);
+    position:relative;
+    z-index:1;
+  }
+  .hero-meta a{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    border:1px solid var(--line);
+    padding:9px 16px;
+    border-radius:100px;
+    transition:border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .hero-meta a:hover, .hero-meta a:focus-visible{
+    border-color:var(--teal);
+    color:var(--teal);
+    background:rgba(94,230,200,0.06);
+  }
+  .hero-meta a:focus-visible{outline:2px solid var(--teal); outline-offset:2px;}
+
+  /* ---------- section shared ---------- */
+  section{
+    padding:96px 0;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:56px;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .section-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--teal);
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(30px,4vw,44px);
+  }
+  .section-note{
+    font-size:14px;
+    color:var(--slate);
+    max-width:280px;
+    text-align:right;
+  }
+  @media (max-width:640px){
+    .section-note{text-align:left; max-width:100%;}
+  }
+
+  /* ---------- about ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1.3fr 1fr;
+    gap:64px;
+  }
+  .about-text p{
+    font-size:17px;
+    line-height:1.75;
+    color:var(--parchment);
+    margin-bottom:20px;
+  }
+  .about-text p:last-child{margin-bottom:0;}
+  .education-list{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+  .edu-item{
+    border-left:2px solid var(--line);
+    padding-left:20px;
+    position:relative;
+  }
+  .edu-item::before{
+    content:'';
+    position:absolute;
+    left:-5px; top:4px;
+    width:8px; height:8px;
+    border-radius:50%;
+    background:var(--navy);
+    border:2px solid var(--teal);
+  }
+  .edu-school{
+    font-weight:600;
+    font-size:15px;
+    color:var(--parchment);
+  }
+  .edu-degree{
+    font-size:14px;
+    color:var(--slate);
+    margin-top:2px;
+  }
+  .edu-meta{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--teal);
+    margin-top:6px;
+    display:flex;
+    gap:10px;
+  }
+  @media (max-width:780px){
+    .about-grid{grid-template-columns:1fr; gap:48px;}
+  }
+
+  /* ---------- projects ---------- */
+  .project-list{
+    display:flex;
+    flex-direction:column;
+  }
+  .project{
+    display:grid;
+    grid-template-columns:140px 1fr auto;
+    gap:32px;
+    align-items:start;
+    padding:32px 0;
+    border-top:1px solid var(--line);
+    transition:background 0.25s ease;
+  }
+  .project:first-child{border-top:1px solid var(--line);}
+  .project:hover{background:rgba(94,230,200,0.03);}
+  .project-tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--coral);
+    padding-top:6px;
+  }
+  .project-body h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:22px;
+    margin-bottom:10px;
+  }
+  .project-body p{
+    font-size:15px;
+    color:var(--slate);
+    line-height:1.65;
+    max-width:520px;
+  }
+  .project-link{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--teal);
+    white-space:nowrap;
+    padding-top:6px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    transition:gap 0.2s ease, opacity 0.2s ease;
+  }
+  .project-link:hover, .project-link:focus-visible{gap:10px;}
+  .project-link:focus-visible{outline:2px solid var(--teal); outline-offset:4px; border-radius:2px;}
+  .project-link svg{width:13px;height:13px;flex-shrink:0;}
+  @media (max-width:780px){
+    .project{grid-template-columns:1fr; gap:10px;}
+    .project-link{justify-self:start;}
+  }
+
+  /* ---------- skills ---------- */
+  .skills-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:48px;
+  }
+  .skill-group-title{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--teal);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-bottom:20px;
+  }
+  .pill-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .pill{
+    border:1px solid var(--line);
+    color:var(--parchment);
+    font-size:14px;
+    padding:8px 16px;
+    border-radius:100px;
+    transition:border-color 0.2s ease, transform 0.15s ease;
+  }
+  .pill:hover{border-color:var(--teal); transform:translateY(-2px);}
+  @media (max-width:780px){
+    .skills-grid{grid-template-columns:1fr; gap:36px;}
+  }
+
+  /* ---------- certifications ---------- */
+  .cert-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  .cert-cell{
+    background:var(--navy);
+    padding:28px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .cert-cell .cert-kind{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--slate);
+  }
+  .cert-cell .cert-name{
+    font-size:16px;
+    font-weight:600;
+    line-height:1.4;
+  }
+  @media (max-width:640px){
+    .cert-grid{grid-template-columns:1fr;}
+  }
+
+  /* ---------- contact / footer ---------- */
+  footer{
+    padding:90px 0 60px;
+  }
+  .contact-inner{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:36px;
+  }
+  .contact-cta{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(32px,5vw,56px);
+    max-width:680px;
+    line-height:1.08;
+  }
+  .contact-cta em{font-style:italic; color:var(--teal); font-weight:400;}
+  .contact-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:16px;
+  }
+  .contact-links a{
+    font-size:15px;
+    padding:14px 24px;
+    border-radius:100px;
+    border:1px solid var(--line);
+    transition:all 0.2s ease;
+  }
+  .contact-links a.primary{
+    background:var(--teal);
+    color:var(--navy-deep);
+    border-color:var(--teal);
+    font-weight:600;
+  }
+  .contact-links a.primary:hover{background:var(--parchment); border-color:var(--parchment);}
+  .contact-links a:not(.primary):hover{border-color:var(--teal); color:var(--teal);}
+  .contact-links a:focus-visible{outline:2px solid var(--teal); outline-offset:3px;}
+  .foot-note{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--slate);
+    margin-top:40px;
+  }
+
+  .fade-in{
+    opacity:0;
+    transform:translateY(16px);
+    transition:opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <span class="nav-mark">CS_</span>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#certifications">Certifications</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero">
+  <svg id="trace-svg" viewBox="0 0 1080 520" preserveAspectRatio="none" aria-hidden="true">
+    <path class="trace-path" d="M -20 90 L 180 90 L 220 130 L 220 240 L 320 240" />
+    <path class="trace-path" d="M 1100 60 L 880 60 L 840 100 L 840 380 L 760 460 L 760 540" />
+    <circle class="trace-node" cx="220" cy="130" r="4"/>
+    <circle class="trace-node" cx="320" cy="240" r="4"/>
+    <circle class="trace-node" cx="840" cy="100" r="4"/>
+    <circle class="trace-node" cx="760" cy="460" r="4"/>
+  </svg>
+  <div class="wrap">
+    <div class="eyebrow">Final-year AI &amp; ML engineering student</div>
+    <h1>AI/ML student. <em>I'd rather ship</em><br>than just study.</h1>
+    <p class="hero-sub">Not enterprise software — campus food ratings, legal Q&amp;A, cybersecurity awareness. Practical AI/ML, shipped.</p>
+    <div class="hero-meta">
+      <a href="mailto:sireeshachapala165@gmail.com">✉ sireeshachapala165@gmail.com</a>
+      <a href="tel:+919618004218">📞 +91 96180 04218</a>
+      <a href="#" id="linkedin-link">LinkedIn ↗</a>
+      <a href="https://github.com/sireeshachapala165-stack" target="_blank" rel="noopener" id="github-link">GitHub ↗</a>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-label">About</div>
+        <h2>Eluru to engineering.</h2>
+      </div>
+      <div class="section-note">Currently in my final year at Sri Vasavi Engineering College, JNTUK.</div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text fade-in">
+        <p>I'm a final-year B.Tech student in Artificial Intelligence and Machine Learning, based in Eluru District, Andhra Pradesh. I'm drawn to problems I can actually see around me — hostel food quality, legal access, cybersecurity habits — and I build working software to address them, rather than waiting for the "real" job to start applying what I'm learning.</p>
+        <p>I'm comfortable across Java, Python, JavaScript, and the fundamentals of machine learning, and I'm looking for an entry-level role where I can keep building things that get used, while learning fast from people further along the path.</p>
+      </div>
+      <div class="education-list fade-in">
+        <div class="edu-item">
+          <div class="edu-school">Sri Vasavi Engineering College, JNTUK</div>
+          <div class="edu-degree">B.Tech, Artificial Intelligence &amp; Machine Learning</div>
+          <div class="edu-meta"><span>2023–2027</span><span>·</span><span>CGPA 8.01</span></div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-school">A.P.S.W.R Junior College</div>
+          <div class="edu-degree">Intermediate</div>
+          <div class="edu-meta"><span>2021–2023</span><span>·</span><span>74.3%</span></div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-school">APSWRS School for Girls</div>
+          <div class="edu-degree">SSC</div>
+          <div class="edu-meta"><span>2016–2021</span><span>·</span><span>95.1%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Projects</div>
+        <h2>Four problems, four fixes.</h2>
+      </div>
+      <div class="section-note">Each one tagged by the world it was built for.</div>
+    </div>
+    <div class="project-list fade-in">
+
+      <div class="project">
+        <div class="project-tag">Civic</div>
+        <div class="project-body">
+          <h3>Digital Defense</h3>
+          <p>A community service initiative running cybersecurity awareness programs to promote safe digital practices among local participants.</p>
+        </div>
+        <div></div>
+      </div>
+
+      <div class="project">
+        <div class="project-tag">Campus</div>
+        <div class="project-body">
+          <h3>PG Food Rating</h3>
+          <p>A web application letting students rate and review food at their PG accommodations and hostels — turning word-of-mouth complaints into something searchable.</p>
+        </div>
+        <a class="project-link" href="https://replit.com/@sireeshachapala/PG-Food-Ratin" target="_blank" rel="noopener">
+          View project
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+
+      <div class="project">
+        <div class="project-tag">Legal</div>
+        <div class="project-body">
+          <h3>AI Legal Assistant</h3>
+          <p>A web-based assistant that answers legal questions using the OpenAI API, built to make basic legal information easier to reach for people without easy access to a lawyer.</p>
+        </div>
+        <a class="project-link" href="https://sireeshachapala165-stack.github.io/AI-Legal-Assistant/" target="_blank" rel="noopener">
+          View project
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+
+      <div class="project">
+        <div class="project-tag">Personal</div>
+        <div class="project-body">
+          <h3>Portfolio Website</h3>
+          <p>A responsive personal site built to showcase projects, technical skills, certifications, and achievements in one place.</p>
+        </div>
+        <a class="project-link" href="https://sireeshachapala165-stack.github.io/Portfolio-Builder/" target="_blank" rel="noopener">
+          View project
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Skills</div>
+        <h2>What I work with.</h2>
+      </div>
+    </div>
+    <div class="skills-grid fade-in">
+      <div>
+        <div class="skill-group-title">Technical</div>
+        <div class="pill-row">
+          <span class="pill">Java</span>
+          <span class="pill">Python</span>
+          <span class="pill">JavaScript</span>
+          <span class="pill">HTML</span>
+          <span class="pill">CSS</span>
+          <span class="pill">Machine Learning (Fundamentals)</span>
+          <span class="pill">GitHub</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title">Working style</div>
+        <div class="pill-row">
+          <span class="pill">Teamwork</span>
+          <span class="pill">Communication</span>
+          <span class="pill">Time Management</span>
+          <span class="pill">Self-Motivation</span>
+          <span class="pill">Adaptability</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certifications">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="section-label">Certifications &amp; achievements</div>
+        <h2>Outside the classroom.</h2>
+      </div>
+    </div>
+    <div class="cert-grid fade-in">
+      <div class="cert-cell">
+        <span class="cert-kind">Certification</span>
+        <span class="cert-name">Salesforce Certified Agentforce Specialist</span>
+      </div>
+      <div class="cert-cell">
+        <span class="cert-kind">Certification</span>
+        <span class="cert-name">Infosys Springboard — Introduction to AI</span>
+      </div>
+      <div class="cert-cell">
+        <span class="cert-kind">Certification</span>
+        <span class="cert-name">Cybersecurity Awareness Certificate</span>
+      </div>
+      <div class="cert-cell">
+        <span class="cert-kind">Course</span>
+        <span class="cert-name">NPTEL 12-Week Course — Introduction to Internet of Things</span>
+      </div>
+      <div class="cert-cell">
+        <span class="cert-kind">Workshop</span>
+        <span class="cert-name">Freedom Fest Workshop — Participant</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact">
+  <div class="wrap">
+    <div class="contact-inner">
+      <div class="contact-cta">Looking for an entry-level role where <em>shipping something real</em> matters more than the title on it.</div>
+      <div class="contact-links">
+        <a class="primary" href="mailto:sireeshachapala165@gmail.com">Email me</a>
+        <a href="tel:+919618004218">+91 96180 04218</a>
+        <a href="#" id="linkedin-link-2">LinkedIn ↗</a>
+        <a href="https://github.com/sireeshachapala165-stack" target="_blank" rel="noopener" id="github-link-2">GitHub ↗</a>
+      </div>
+      <div class="foot-note">Eluru District, Andhra Pradesh, India</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Fade-in on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
